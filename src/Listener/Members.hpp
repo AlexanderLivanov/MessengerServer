@@ -4,6 +4,7 @@
 #include <set>
 #include <deque>
 #include <tuple>
+#include <unordered_map>
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
@@ -35,8 +36,21 @@ public:
 				member->deliver(msg);
 			}
 		}
+		std::erase_if(hashes,[](const auto& item){
+			auto current = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+			auto const& [key,value] = item;
+			return (current-value)>4*60;
+		});
+	}
+	bool HasHash(const std::string& hash){
+		if(!hashes.contains(hash)){
+			hashes[hash] = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+			return false;
+		}
+		return true;
 	}
 private:
 	enum { max_recent_msgs = 100};
 	std::set<chat_member_ptr> members;
+	std::unordered_map<std::string,time_t> hashes;
 };
