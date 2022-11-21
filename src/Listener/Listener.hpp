@@ -48,8 +48,9 @@ private:
 				time_t timestamp = j["timestamp"];
 
 				Message myMsg{pEC(sender),pEC(receiver),data,iv,signature,timestamp};
-				if(myMsg.Verify() && (!room.HasHash(myMsg.GetHash()))){
-					room.deliver(std::make_tuple(socket.remote_endpoint(), read_msg.substr(0, n)));
+				if(myMsg.Verify()){
+                                        if(!room.HasHash(myMsg.GetHash())){
+					room.deliver(std::make_tuple(socket.remote_endpoint(), read_msg.substr(0, n))); }
 				}
 			}
 			read_msg.erase(0,n);
