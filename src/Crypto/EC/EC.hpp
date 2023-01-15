@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <vector>
+#include <array>
 
 #include <openssl/evp.h>
 #include <openssl/ec.h>
@@ -7,7 +9,6 @@
 #include <openssl/err.h>
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
-
 
 
 class pEC final{

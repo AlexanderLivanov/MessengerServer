@@ -38,19 +38,18 @@ private:
 			auto j = nlohmann::json::parse(read_msg.substr(0,n));
 			if(j.contains("sender") && j.contains("receiver") && j.contains("data") && j.contains("iv") && 
 				j.contains("signature") && j.contains("timestamp") && 
-				j["iv"].size()==16 && j["signature"].size()==2)
+				j["iv"].size()==12 && j["signature"].size()==2)
 			{
 				std::string sender = j["sender"];
 				std::string receiver = j["receiver"];
 				std::vector<unsigned char> data = j["data"];
-				std::array<unsigned char,16> iv = j["iv"];
+				std::array<unsigned char,12> iv = j["iv"];
 				std::array<std::string,2> signature = j["signature"];
 				time_t timestamp = j["timestamp"];
 
 				Message myMsg{pEC(sender),pEC(receiver),data,iv,signature,timestamp};
-				if(myMsg.Verify()){
-                                        if(!room.HasHash(myMsg.GetHash())){
-					room.deliver(std::make_tuple(socket.remote_endpoint(), read_msg.substr(0, n))); }
+				if(myMsg.Verify() && (!room.HasHash(myMsg.GetHash()))){
+					room.deliver(std::make_tuple(socket.remote_endpoint(), read_msg.substr(0, n)));
 				}
 			}
 			read_msg.erase(0,n);

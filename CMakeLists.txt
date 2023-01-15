@@ -12,6 +12,8 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 
 include_directories(include)
 
+#set(OPENSSL_USE_STATIC_LIBS TRUE)
+
 find_package(Boost REQUIRED)
 find_package(OpenSSL REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
