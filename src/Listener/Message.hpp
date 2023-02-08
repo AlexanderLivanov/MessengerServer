@@ -1,7 +1,6 @@
 #pragma once
 #include "../Crypto/EC/EC.hpp"
 #include "../Crypto/HASH/SHA256.hpp"
-#include "../Crypto/ChaCha20/ChaCha20.hpp"
 
 
 struct Message final{
@@ -10,7 +9,7 @@ struct Message final{
 
     std::vector<unsigned char> data;
 
-    std::array<unsigned char, 12> iv; //For ChaCha20
+    std::array<unsigned char, 16> iv; //For ChaCha20
     std::array<std::string,2> signature; // 0 - R, 1 - S numbers in ECDSA
 
     time_t timestamp;
@@ -32,14 +31,5 @@ struct Message final{
             return res && (std::abs(current - timestamp) <= 15);
         }
         return res;
-    }
-    
-    const std::vector<unsigned char> DecryptViaSender(sEC _sender){
-        auto key = _sender.Exchange(receiver);
-        return chacha20_dec(data,key,iv);
-    }
-    const std::vector<unsigned char> DecrypViaReceiver(sEC _receiver){
-        auto key = _receiver.Exchange(sender);
-        return chacha20_dec(data,key,iv);
     }
 };
